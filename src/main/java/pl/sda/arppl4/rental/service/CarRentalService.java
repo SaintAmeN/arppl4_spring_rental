@@ -3,6 +3,7 @@ package pl.sda.arppl4.rental.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import pl.sda.arppl4.rental.exception.CarNotAvailableException;
 import pl.sda.arppl4.rental.model.Car;
 import pl.sda.arppl4.rental.model.CarRental;
 import pl.sda.arppl4.rental.repository.CarRentalRepository;
@@ -47,5 +48,26 @@ public class CarRentalService {
             }
         }
         return false;
+    }
+
+    public void rentCar(Long carId, CarRental carRental) {
+        Optional<Car> optionalCar = carRepository.findById(carId);
+        if(optionalCar.isPresent()){
+            Car car = optionalCar.get();
+
+            // jeśli nie jest wynajęty (to jest ok)
+            if(!isRented(car)){
+                CarRental stworzonyNowyWynajem = new CarRental();
+                stworzonyNowyWynajem.setClientName(carRental.getClientName());
+                stworzonyNowyWynajem.setClientSurname(carRental.getClientSurname());
+                stworzonyNowyWynajem.setPrice(carRental.getPrice());
+                stworzonyNowyWynajem.setCar(car);
+
+                carRentalRepository.save(stworzonyNowyWynajem);
+                return;
+            }
+            throw new CarNotAvailableException("Car not available, id: " + carId);
+        }
+        throw new EntityNotFoundException("Unable to find car with id: " + carId);
     }
 }

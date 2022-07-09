@@ -2,6 +2,7 @@ package pl.sda.arppl4.rental.model;
 
 
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -20,6 +21,7 @@ public class CarRental {
     private String clientName;
     private String clientSurname;
 
+    @CreationTimestamp
     private LocalDateTime rentDateTime;
     private LocalDateTime returnDateTime;
 
@@ -29,4 +31,11 @@ public class CarRental {
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private Car car;
+
+    public CarRental(String clientName, String clientSurname, Double price, Car car) {
+        this.clientName = clientName;
+        this.clientSurname = clientSurname;
+        this.price = price;
+        this.car = car;
+    }
 }

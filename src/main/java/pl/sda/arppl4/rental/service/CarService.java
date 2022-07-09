@@ -15,6 +15,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CarService {
     private final CarRepository carRepository;
+    private final CarRentalService carRentalService;
 
     public List<Car> findAll() {
         return carRepository.findAll();
