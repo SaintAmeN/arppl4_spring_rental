@@ -12,6 +12,7 @@ import pl.sda.arppl4.rental.repository.CarRentalRepository;
 import pl.sda.arppl4.rental.repository.CarRepository;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -76,5 +77,38 @@ public class CarRentalService {
                 request.getNameOfTheClient(),
                 request.getSurnameOfTheClient(),
                 request.getHourlyPrice());
+    }
+
+    public void returnCar(Long carId) {
+        Optional<Car> carOptional = carRepository.findById(carId);
+        if (carOptional.isPresent()) {
+            Car car = carOptional.get();
+
+            Optional<CarRental> optionalCarRental = findActiveCarRental(car);
+            if (optionalCarRental.isPresent()) {
+                CarRental carRental = optionalCarRental.get();
+
+                // ustaw datę zakończenia najmu
+                carRental.setReturnDateTime(LocalDateTime.now());
+
+                // dokonujemy aktualizacji w bazie
+                carRentalRepository.save(carRental);
+                return;
+            }
+            throw new CarNotAvailableException("Car not rented, id: " + carId);
+        }
+        throw new EntityNotFoundException("Unable to find car with id: " + carId);
+    }
+
+    private Optional<CarRental> findActiveCarRental(Car car) {
+        for (CarRental carRental : car.getCarRentals()) {
+            if (carRental.getReturnDateTime() == null) {
+                // znaleźliśmy aktywny wynajem
+                return Optional.of(carRental);
+            }
+        }
+
+        // nie znaleźliśmy aktywnego wynajmu
+        return Optional.empty();
     }
 }

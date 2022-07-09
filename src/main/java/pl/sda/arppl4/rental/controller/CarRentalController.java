@@ -31,18 +31,9 @@ public class CarRentalController {
         carRentalService.rentCar(carId, request);
     }
 
-//    @PostMapping("/rent/{carId}")
-//    public void rentCar(@PathVariable Long carId, @RequestBody CarRental carRental) {
-//        log.info("Requested rental of car with id: " + carId);
-//        carRentalService.rentCar(carId, carRental);
-//    }
-//    ###
-//    POST http://localhost:18085/api/rental/rent/3
-//    Content-Type: application/json
-//
-//    {
-//        "clientName": "Pawel",
-//            "clientSurname": "Gawel",
-//            "price": 300.0
-//    }
+    @PatchMapping("/return")
+    public void returnCar(@RequestParam Long carId) {
+        log.info("Requested return of car with id: " + carId);
+        carRentalService.returnCar(carId);
+    }
 }
