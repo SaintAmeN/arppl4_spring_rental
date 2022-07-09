@@ -1,6 +1,8 @@
 package pl.sda.arppl4.rental.model;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -30,12 +32,12 @@ public class CarRental {
     @ManyToOne()
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
+    @JsonBackReference
     private Car car;
 
-    public CarRental(String clientName, String clientSurname, Double price, Car car) {
+    public CarRental(String clientName, String clientSurname, Double price) {
         this.clientName = clientName;
         this.clientSurname = clientSurname;
         this.price = price;
-        this.car = car;
     }
 }

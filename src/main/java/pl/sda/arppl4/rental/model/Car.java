@@ -1,9 +1,11 @@
 package pl.sda.arppl4.rental.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import pl.sda.arppl4.rental.model.dto.CarDTO;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -38,7 +40,20 @@ public class Car {
     //            b. zawiera tylko wynajmy powiązane z tym samochodem?
     @OneToMany(mappedBy = "car", fetch = FetchType.EAGER)
     @EqualsAndHashCode.Exclude
+    @JsonManagedReference
     private Set<CarRental> carRentals;
 
+    public CarDTO mapToCarDTO() {
+        return new CarDTO(
+                id,
+                name,
+                make,
+                productionDate,
+                bodyType,
+                seats,
+                carGearBox,
+                engineCapacity
+        );
+    }
 }
 

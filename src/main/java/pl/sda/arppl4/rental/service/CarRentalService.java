@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import pl.sda.arppl4.rental.exception.CarNotAvailableException;
 import pl.sda.arppl4.rental.model.Car;
 import pl.sda.arppl4.rental.model.CarRental;
+import pl.sda.arppl4.rental.model.dto.CarDTO;
+import pl.sda.arppl4.rental.model.dto.RentCarRequest;
 import pl.sda.arppl4.rental.repository.CarRentalRepository;
 import pl.sda.arppl4.rental.repository.CarRepository;
 
@@ -21,14 +23,14 @@ public class CarRentalService {
     private final CarRentalRepository carRentalRepository;
     private final CarRepository carRepository;
 
-    public List<Car> getAllAvailableCars() {
+    public List<CarDTO> getAllAvailableCars() {
         List<Car> carList = carRepository.findAll();
 
-        List<Car> cars = new ArrayList<>();
+        List<CarDTO> cars = new ArrayList<>();
         for (Car car : carList) {
-            if(!isRented(car)){
+            if (!isRented(car)) {
                 // samochód jest dostępny, zwróć go...
-                cars.add(car);
+                cars.add(car.mapToCarDTO());
             }
         }
 
@@ -38,6 +40,7 @@ public class CarRentalService {
     /**
      * Metoda sprawdza czy dany samochód jest wynajęty. Jeśli jego data zwrotu (dowolnego najmu)
      * jest równa null, to samochód jest wynajęty.
+     *
      * @param car - sprawdzany samochód.
      * @return informacja czy samochód jest wynajęty (true/false).
      */
@@ -50,24 +53,28 @@ public class CarRentalService {
         return false;
     }
 
-    public void rentCar(Long carId, CarRental carRental) {
+    public void rentCar(Long carId, RentCarRequest request) {
         Optional<Car> optionalCar = carRepository.findById(carId);
-        if(optionalCar.isPresent()){
+        if (optionalCar.isPresent()) {
             Car car = optionalCar.get();
 
             // jeśli nie jest wynajęty (to jest ok)
-            if(!isRented(car)){
-                CarRental stworzonyNowyWynajem = new CarRental();
-                stworzonyNowyWynajem.setClientName(carRental.getClientName());
-                stworzonyNowyWynajem.setClientSurname(carRental.getClientSurname());
-                stworzonyNowyWynajem.setPrice(carRental.getPrice());
-                stworzonyNowyWynajem.setCar(car);
+            if (!isRented(car)) {
+                CarRental carRental = mapRentCarRequestToCarRental(request);
+                carRental.setCar(car);
 
-                carRentalRepository.save(stworzonyNowyWynajem);
+                carRentalRepository.save(carRental);
                 return;
             }
             throw new CarNotAvailableException("Car not available, id: " + carId);
         }
         throw new EntityNotFoundException("Unable to find car with id: " + carId);
+    }
+
+    private CarRental mapRentCarRequestToCarRental(RentCarRequest request) {
+        return new CarRental(
+                request.getNameOfTheClient(),
+                request.getSurnameOfTheClient(),
+                request.getHourlyPrice());
     }
 }

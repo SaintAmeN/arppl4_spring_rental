@@ -4,9 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.sda.arppl4.rental.model.Car;
+import pl.sda.arppl4.rental.model.dto.CarDTO;
 import pl.sda.arppl4.rental.repository.CarRepository;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,10 +17,16 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CarService {
     private final CarRepository carRepository;
-    private final CarRentalService carRentalService;
 
-    public List<Car> findAll() {
-        return carRepository.findAll();
+    public List<CarDTO> findAll() {
+        List<Car> carList = carRepository.findAll();
+
+        List<CarDTO> cars = new ArrayList<>();
+        for (Car car : carList) {
+            cars.add(car.mapToCarDTO());
+        }
+
+        return cars;
     }
 
     public void addCar(Car car) {
