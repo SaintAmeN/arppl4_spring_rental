@@ -2,6 +2,7 @@ package pl.sda.arppl4.rental.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.sda.arppl4.rental.exception.CarNotAvailableException;
 import pl.sda.arppl4.rental.model.Car;
@@ -21,7 +22,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class CarRentalService {
-    private final CarRentalRepository carRentalRepository;
+    private final  CarRentalRepository carRentalRepository;
     private final CarRepository carRepository;
 
     public List<CarDTO> getAllAvailableCars() {

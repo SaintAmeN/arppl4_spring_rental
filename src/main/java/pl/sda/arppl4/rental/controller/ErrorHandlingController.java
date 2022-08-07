@@ -25,6 +25,7 @@ public class ErrorHandlingController {
         // - body<>
         // - status (odpowiedź / response)
         return ResponseEntity
+
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorMessageResponse(exception.getMessage()));
     }

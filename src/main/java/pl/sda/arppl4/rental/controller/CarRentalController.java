@@ -7,6 +7,8 @@ import pl.sda.arppl4.rental.model.Car;
 import pl.sda.arppl4.rental.model.CarRental;
 import pl.sda.arppl4.rental.model.dto.CarDTO;
 import pl.sda.arppl4.rental.model.dto.RentCarRequest;
+import pl.sda.arppl4.rental.repository.CarRentalRepository;
+import pl.sda.arppl4.rental.repository.CarRepository;
 import pl.sda.arppl4.rental.service.CarRentalService;
 import pl.sda.arppl4.rental.service.CarService;
 
